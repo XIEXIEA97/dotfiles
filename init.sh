@@ -1,17 +1,18 @@
 #!/bin/sh
-for file in .*; do
+for file in $(dirname $(readlink -f $0))/.*; do
+    fn=$(basename $file)
     if [ -f $file ]; then
-        if [ -e "$HOME/$file" ]; then
-            if [ -L "$HOME/$file" ]; then
-                rm "$HOME/$file"
-                echo "Removed existing symbolic link $HOME/$file"
+        if [ -e "$HOME/$fn" ]; then
+            if [ -L "$HOME/$fn" ]; then
+                echo "Remove existing symbolic link $HOME/$fn"
+                rm -i "$HOME/$fn"
             else
-                mv -i "$HOME/$file" "$HOME/$file.backup"
-                echo "Backuped $HOME/$file to $HOME/$file.backup"
+                echo "Back up $HOME/$fn to $HOME/$fn.backup"
+                mv -i "$HOME/$fn" "$HOME/$fn.backup"
             fi
         fi
 
-        ln -s "$(pwd)/$file" "$HOME/$file"
-        echo "Created symbolic link from $file to $HOME/$file"
+        echo "Create symbolic link from $file to $HOME/$fn"
+        ln -s -i "$file" "$HOME/$fn"
     fi
 done
